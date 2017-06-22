@@ -19,7 +19,7 @@ driver = webdriver.Chrome(driver_path)
 
 
 max_page_number = 2386
-base_url = 'http://www.korea.go.kr/orgSite?pageIndex='
+base_url = 'http://www.gov.kr/portal/orgSite?pageIndex='
 
 file_path = os.path.expanduser('~') + '/Documents/keyword/' + target_folder_name + '/'
 
