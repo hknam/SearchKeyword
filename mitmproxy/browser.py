@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[ ]:
-
 import sys
 import linecache
 from selenium import webdriver
@@ -12,21 +7,15 @@ import configparser
 import mitmproxy_controller as controller
 
 
-# In[ ]:
-
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-
-# In[ ]:
 
 proxy = config['proxy']['address']
 port =  config['proxy']['port']
 driver_path = config['webdriver']['path']
 base_url = config['webdriver']['base_url']
 
-
-# In[ ]:
 
 def init_webdriver():
     """
@@ -51,15 +40,11 @@ def init_webdriver():
         driver.quit()
 
 
-# In[ ]:
-
 def find_external_url(driver):
     links = driver.find_elements_by_tag_name('a')
     for link in links:
         print(link.text)
 
-
-# In[ ]:
 
 def find_input_tag(driver):
     try:
@@ -121,16 +106,12 @@ def find_input_tag(driver):
         print(e)
 
 
-# In[ ]:
 
 def find_id_tag(tag):
     if tag.get_attribute('id'):
         return tag.get_attribute('id')
     else:
         return False
-
-
-# In[ ]:
 
 def find_class_tag(tag):
     if tag.get_attribute('class'):
@@ -139,16 +120,12 @@ def find_class_tag(tag):
         return False
 
 
-# In[ ]:
-
 def find_name_tag(tag):
     if tag.get_attribute('name'):
         return tag.get_attribute('name')
     else:
         return False
 
-
-# In[ ]:
 
 def main():
     try:
@@ -186,13 +163,5 @@ def main():
         sys.exit(1)
 
 
-# In[ ]:
-
 if __name__ == "__main__":
-    main()
-
-
-# In[ ]:
-
-
-
+   main()
