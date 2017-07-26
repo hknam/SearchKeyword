@@ -4,19 +4,21 @@ import logging
 import configparser
 
 global config
-def init_logger():
+
+def init_logger(file_name):
 
     global config
     global logger
 
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-    
+
     logger = logging.getLogger('mitmproxy')
 
     fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
-    
-    file_name = config['filename']['browser']
+
+    folder_path = os.path.expanduser('~') + "/" + "flowdump/logs/"
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
 
     file_handler = logging.FileHandler(file_name)
     stream_handler = logging.StreamHandler()

@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import configparser
 import mitmproxy_controller as controller
-
+import logging
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -16,6 +16,7 @@ port =  config['proxy']['port']
 driver_path = config['webdriver']['path']
 base_url = config['webdriver']['base_url']
 
+logger = ''
 
 def init_webdriver():
     """
@@ -45,7 +46,7 @@ def find_external_url(driver):
     for link in links:
         current_url = driver.current_url
 
-        print(link.get_attribute('href'))
+        #print(link.get_attribute('href'))
 
 
 def find_input_tag(driver):
@@ -131,11 +132,14 @@ def find_name_tag(tag):
 
 
 def main():
+    global logger
     try:
+
         with open('gov_list.txt', 'r') as file:
             pages = file.read()
         for page in pages.split('\n'):
             dumpfile_name = page.split(',')[0]
+            logger = controller.init_logger(dumpfile_name)
             url = page.split(',')[1]
             mitm_proc = controller.start_process(dumpfile_name)
             driver = init_webdriver()
@@ -143,7 +147,7 @@ def main():
             driver.get(url)
             find_input_tag(driver)
             driver.implicitly_wait(30)
-
+            logger.debug(url)
             driver.quit()
             controller.kill_process(mitm_proc)
         
@@ -156,6 +160,7 @@ def main():
         line = linecache.getline(filename, lineno, f.f_globals)
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
+        logger.warning(e)
         sys.exit(1)
 
 
