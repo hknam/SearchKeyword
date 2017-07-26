@@ -135,17 +135,19 @@ def find_name_tag(tag):
 def main():
     global logger
     try:
-
         with open('gov_list.txt', 'r') as file:
             pages = file.read()
+
         for page in pages.split('\n'):
             dumpfile_name = page.split(',')[0]
             logger = controller.init_logger(dumpfile_name)
             url = page.split(',')[1]
             mitm_proc = controller.start_process(dumpfile_name)
             driver = init_webdriver()
+            logger.info("open page")
             driver.get(base_url)
             driver.get(url)
+            logger.info("find input tag")
             find_input_tag(driver)
             driver.implicitly_wait(30)
             logger.debug(url)

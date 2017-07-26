@@ -20,7 +20,9 @@ def init_logger(file_name):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    file_handler = logging.FileHandler(file_name + file_name)
+    file_max_byte = 1024 * 1024 * 100
+    #file_handler = logging.FileHandler(file_name + file_name)
+    file_handler = logging.handlers.RotatingFileHandler(file_name + file_name, maxBytes=file_max_byte, backupCount=10)
     stream_handler = logging.StreamHandler()
 
     file_handler.setFormatter(fomatter)
@@ -36,7 +38,7 @@ def init_logger(file_name):
 
 def start_process(dumpfile_name):
 
-    folder_path = os.path.expanduser('~') + "/" + "flowdump" + "/"
+    folder_path = os.path.expanduser('~') + "/" + "flowdump/traffic/"
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)

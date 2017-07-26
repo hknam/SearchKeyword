@@ -152,8 +152,10 @@ def main():
             url = page.split(',')[1]
             mitm_proc = controller.start_process(dumpfile_name)
             driver = init_webdriver()
+            logger.info("open page")
             driver.get(base_url)
             driver.get(url)
+            logger.info("find input tag")
             find_input_tag(driver)
             driver.implicitly_wait(30)
             logger.debug(url)
