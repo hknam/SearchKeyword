@@ -20,9 +20,8 @@ def init_logger(file_name):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    file_max_byte = 1024 * 1024 * 100
-    #file_handler = logging.FileHandler(file_name + file_name)
-    file_handler = logger.handlers.RotatingFileHandler(file_name + file_name, maxBytes=file_max_byte, backupCount=10)
+    file_handler = logging.FileHandler(file_name + file_name)
+
     stream_handler = logging.StreamHandler()
 
     file_handler.setFormatter(fomatter)
