@@ -20,7 +20,7 @@ def init_logger(file_name):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    file_handler = logging.FileHandler(file_name)
+    file_handler = logging.FileHandler(file_name + file_name)
     stream_handler = logging.StreamHandler()
 
     file_handler.setFormatter(fomatter)
