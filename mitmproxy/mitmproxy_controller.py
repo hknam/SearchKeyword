@@ -49,7 +49,7 @@ def start_process(dumpfile_name):
 
 def kill_process(process):
     
-    process_list_command = "ps"
+    process_list_command = "ps -ef | grep mitmproxy"
     process_list_result = subprocess.check_output(process_list_command, shell=True)
     results = str(process_list_result).split('\\n')
     index = -1
@@ -57,10 +57,10 @@ def kill_process(process):
     for result in results:
         if result.find('mitmproxy') > 0:
             lst = result.split(' ')
-            index = lst[lst.index('?')-1]
+            index = lst[5]
             break
     
-    process_kill_command = " kill " + str(index)
+    process_kill_command = " kill -9 " + str(index)
     run_command = subprocess.Popen(process_kill_command, stdout=subprocess.PIPE, shell=True)
 
 
