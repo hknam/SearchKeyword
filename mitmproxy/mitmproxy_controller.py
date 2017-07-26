@@ -22,7 +22,7 @@ def init_logger(file_name):
 
     file_max_byte = 1024 * 1024 * 100
     #file_handler = logging.FileHandler(file_name + file_name)
-    file_handler = logging.handlers.RotatingFileHandler(file_name + file_name, maxBytes=file_max_byte, backupCount=10)
+    file_handler = logger.handlers.RotatingFileHandler(file_name + file_name, maxBytes=file_max_byte, backupCount=10)
     stream_handler = logging.StreamHandler()
 
     file_handler.setFormatter(fomatter)
