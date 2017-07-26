@@ -43,7 +43,9 @@ def init_webdriver():
 def find_external_url(driver):
     links = driver.find_elements_by_tag_name('a')
     for link in links:
-        print(link.text)
+        current_url = driver.current_url
+
+        print(link.get_attribute('href'))
 
 
 def find_input_tag(driver):
@@ -90,7 +92,8 @@ def find_input_tag(driver):
 
                 next_url = driver.current_url
                 if prev_url != next_url:
-                    find_external_url(driver)
+                    if next_url.startswith('https://'):
+                        find_external_url(driver)
                 break
             else:
                 print("Doesn't find any input tags")
@@ -129,26 +132,20 @@ def find_name_tag(tag):
 
 def main():
     try:
-        driver = init_webdriver()
-        #mitm_proc = controller.start_process('test')
-        
-        driver.get(base_url)
-        
-        
         with open('gov_list.txt', 'r') as file:
             pages = file.read()
         for page in pages.split('\n'):
+            dumpfile_name = page.split(',')[0]
             url = page.split(',')[1]
+            mitm_proc = controller.start_process(dumpfile_name)
+            driver = init_webdriver()
+            driver.get(base_url)
             driver.get(url)
             find_input_tag(driver)
             driver.implicitly_wait(30)
-            
-        '''
-        driver.get('http://gc.jbpolice.go.kr/index.police')
-        driver.implicitly_wait(30)
-        find_input_tag(driver)
-        '''
-        #controller.kill_process(mitm_proc)
+
+            driver.quit()
+            controller.kill_process(mitm_proc)
         
     except Exception as e:
         exc_type, exc_obj, tb = sys.exc_info()
@@ -159,7 +156,6 @@ def main():
         line = linecache.getline(filename, lineno, f.f_globals)
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
-        driver.quit()
         sys.exit(1)
 
 

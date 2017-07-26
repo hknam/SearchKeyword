@@ -1,24 +1,14 @@
-
-# coding: utf-8
-
-# In[22]:
-
 import subprocess
-import time
+import os
 import logging
 import configparser
 
 global config
-global logger
-
-
-# In[23]:
-
 def init_logger():
-    
+
     global config
     global logger
-    
+
     config = configparser.ConfigParser()
     config.read('config.ini')
     
@@ -42,28 +32,21 @@ def init_logger():
     return logger
 
 
-# In[24]:
-
 def start_process(dumpfile_name):
-    #global config
-    #container_name = config['proxy']['name']
-    container_name = 'mitmproxy'
-    
-    file_path = '/home/' + dumpfile_name
+
+    folder_path = os.path.expanduser('~') + "/" + "flowdump" + "/"
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
       
-    command = "docker exec " + container_name + " mitmproxy -w " + file_path
-    #logger.debug(command)
+    command = "mitmproxy -w " + folder_path + dumpfile_name
 
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
 
 
-# In[28]:
-
 def kill_process(process):
     
-    #container_name = config['proxy']['name']
-    container_name = 'mitmproxy'
-    process_list_command = "docker exec " + container_name + " ps"
+    process_list_command = "ps"
     process_list_result = subprocess.check_output(process_list_command, shell=True)
     results = str(process_list_result).split('\\n')
     index = -1
@@ -74,12 +57,9 @@ def kill_process(process):
             index = lst[lst.index('?')-1]
             break
     
-    process_kill_command = "docker exec " + container_name + " kill " + str(index)
-    #logger.debug(process_kill_command)
+    process_kill_command = " kill " + str(index)
     run_command = subprocess.Popen(process_kill_command, stdout=subprocess.PIPE, shell=True)
 
-
-# In[26]:
 
 def main():
     logger = init_logger()
@@ -95,14 +75,5 @@ def main():
     logger.debug("mitmproxy stop")
    
 
-
-# In[ ]:
-
 if __name__ == "__main__":
     main()
-
-
-# In[ ]:
-
-
-
