@@ -5,8 +5,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import configparser
 import mitmproxy_controller as controller
-import logging
-
+import datetime
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -138,11 +137,13 @@ def main():
         with open('gov_list.txt', 'r') as file:
             pages = file.read()
 
+
         for page in pages.split('\n'):
             dumpfile_name = page.split(',')[0]
             logger = controller.init_logger(dumpfile_name)
             url = page.split(',')[1]
             mitm_proc = controller.start_process(dumpfile_name)
+            logger.info("mitmdump start")
             driver = init_webdriver()
             driver.get(base_url)
             logger.info("open web browser : " + base_url)
@@ -153,8 +154,11 @@ def main():
             driver.implicitly_wait(30)
             logger.debug(url)
             driver.quit()
+            logger.info("close web browser")
             controller.kill_process(mitm_proc)
-        
+            logger.info("mitmdump stop")
+
+
     except Exception as e:
         exc_type, exc_obj, tb = sys.exc_info()
         f = tb.tb_frame
