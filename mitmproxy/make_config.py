@@ -15,7 +15,7 @@ config['filename']['finder'] = 'finder.log'
 config['proxy'] = {}
 
 
-config['proxy']['address'] = '172.17.0.2'
+config['proxy']['address'] = '127.0.0.1'
 config['proxy']['port'] = '8080'
 config['proxy']['name'] = 'mitmproxy'
 

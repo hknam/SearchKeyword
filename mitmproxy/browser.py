@@ -4,8 +4,11 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import configparser
-import mitmproxy_controller as controller
+import subprocess
+import os
+import logging
 import datetime
+
 config = configparser.ConfigParser()
 config.read('config.ini')
 
@@ -15,7 +18,31 @@ port =  config['proxy']['port']
 driver_path = config['webdriver']['path']
 base_url = config['webdriver']['base_url']
 
-logger = ''
+
+def init_logger(file_name):
+
+    logger = logging.getLogger(file_name)
+
+    fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
+
+    folder_path = os.path.expanduser('~') + "/" + "flowdump/logs/"
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    file_handler = logging.FileHandler(folder_path + file_name)
+
+    stream_handler = logging.StreamHandler()
+
+    file_handler.setFormatter(fomatter)
+    stream_handler.setFormatter(fomatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
+
+    logger.setLevel(logging.DEBUG)
+
+    return logger
 
 def init_webdriver():
     """
@@ -131,8 +158,32 @@ def find_name_tag(tag):
         return False
 
 
+def start_process(dumpfile_name):
+    folder_path = os.path.expanduser('~') + "/" + "flowdump/traffic/"
+
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+
+    command = "mitmdump -w " + folder_path + dumpfile_name
+
+    run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+
+    return run_command
+
+
+def kill_process(logger, process):
+    process.kill()
+    return process.pid
+
+def close_mitmproxy_socket():
+    http = "fuser -k -n tcp 8080"
+    https = "fuser -k -n tcp 443"
+
+    subprocess.Popen(http, stdout=subprocess.PIPE, shell=True)
+    subprocess.Popen(https, stdout=subprocess.PIPE, shell=True)
+
 def main():
-    global logger
+
     try:
         with open('gov_list.txt', 'r') as file:
             pages = file.read()
@@ -140,23 +191,29 @@ def main():
 
         for page in pages.split('\n'):
             dumpfile_name = page.split(',')[0]
-            logger = controller.init_logger(dumpfile_name)
+            logger = init_logger(dumpfile_name)
             url = page.split(',')[1]
-            mitm_proc = controller.start_process(dumpfile_name)
-            logger.info("mitmdump start")
+            mitm_proc = start_process(dumpfile_name)
+            logger.info("mitmdump process start : pid " + str(mitm_proc.pid) )
+
             driver = init_webdriver()
             driver.get(base_url)
             logger.info("open web browser : " + base_url)
             driver.get(url)
+
             logger.info("current browser url : " + driver.current_url)
             logger.info("find input tag")
             find_input_tag(driver)
             driver.implicitly_wait(30)
             logger.debug(url)
             driver.quit()
+
             logger.info("close web browser")
-            controller.kill_process(mitm_proc)
-            logger.info("mitmdump stop")
+            killed_pid = kill_process(logger, mitm_proc)
+
+            logger.info("mitmdump process stop : pid " + str(killed_pid) )
+            close_mitmproxy_socket()
+            time.sleep(5)
 
 
     except Exception as e:
@@ -168,7 +225,6 @@ def main():
         line = linecache.getline(filename, lineno, f.f_globals)
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
-        logger.warning(e)
         sys.exit(1)
 
 
