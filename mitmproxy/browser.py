@@ -2,6 +2,8 @@ import sys
 import linecache
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
+
 import time
 import configparser
 import subprocess
@@ -60,12 +62,14 @@ def init_webdriver():
         profile.set_preference('dom.popup_maximum', 0)
         
         driver = webdriver.Firefox(executable_path = driver_path, firefox_profile = profile)
-        driver.set_page_load_timeout(60)
+        driver.set_page_load_timeout(120)
                 
         return driver
     except Exception as e:
         print(e)
-        driver.quit()
+        sys.exit(1)
+
+
 
 
 def find_external_url(driver):
@@ -136,7 +140,9 @@ def find_input_tag(driver):
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
 
-
+    except TimeoutException as e:
+        print(e)
+        return
 
 def find_id_tag(tag):
     if tag.get_attribute('id'):
@@ -184,15 +190,17 @@ def close_mitmproxy_socket():
 
 def main():
 
+    urls = 'global.txt'
     try:
-        with open('gov_list.txt', 'r') as file:
+        with open(urls, 'r') as file:
             pages = file.read()
 
 
         for page in pages.split('\n'):
             dumpfile_name = page.split(',')[0]
             logger = init_logger(dumpfile_name)
-            url = page.split(',')[1]
+            #url = page.split(',')[1]
+            url = 'http://' + page
             mitm_proc = start_process(dumpfile_name)
             logger.info("mitmdump process start : pid " + str(mitm_proc.pid) )
 
@@ -215,6 +223,8 @@ def main():
             close_mitmproxy_socket()
             time.sleep(5)
 
+    except TimeoutException as e:
+        print(e)
 
     except Exception as e:
         exc_type, exc_obj, tb = sys.exc_info()
@@ -226,6 +236,8 @@ def main():
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
         sys.exit(1)
+
+
 
 
 if __name__ == "__main__":
