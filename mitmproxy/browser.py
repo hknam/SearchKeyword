@@ -200,7 +200,7 @@ def main():
 
 
     for page in pages.split('\n'):
-        dumpfile_name = page.split(',')[0]
+        dumpfile_name = page.split(',')[0].strip()
         logger = init_logger(dumpfile_name)
 
         mitm_proc = start_process(dumpfile_name)
