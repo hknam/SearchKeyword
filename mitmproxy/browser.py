@@ -130,6 +130,11 @@ def find_input_tag(driver):
             else:
                 print("Doesn't find any input tags")
                 
+    except TimeoutException as e:
+        print(e)
+        driver.close()
+
+
     except Exception as e:
         exc_type, exc_obj, tb = sys.exc_info()
         f = tb.tb_frame
@@ -140,9 +145,7 @@ def find_input_tag(driver):
         print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
         print(e)
 
-    except TimeoutException as e:
-        print(e)
-        return
+
 
 def find_id_tag(tag):
     if tag.get_attribute('id'):
@@ -190,21 +193,27 @@ def close_mitmproxy_socket():
 
 def main():
 
-    urls = 'global.txt'
-    try:
-        with open(urls, 'r') as file:
-            pages = file.read()
+    urls = 'gov_list.txt'
+
+    with open(urls, 'r') as file:
+        pages = file.read()
 
 
-        for page in pages.split('\n'):
-            dumpfile_name = page.split(',')[0]
-            logger = init_logger(dumpfile_name)
-            #url = page.split(',')[1]
-            url = 'http://' + page
-            mitm_proc = start_process(dumpfile_name)
-            logger.info("mitmdump process start : pid " + str(mitm_proc.pid) )
+    for page in pages.split('\n'):
+        dumpfile_name = page.split(',')[0]
+        logger = init_logger(dumpfile_name)
 
-            driver = init_webdriver()
+        mitm_proc = start_process(dumpfile_name)
+        logger.info("mitmdump process start : pid " + str(mitm_proc.pid))
+
+
+        driver = init_webdriver()
+        logger.info("open selenium webdriver")
+
+        url = page.split(',')[1]
+        # url = 'http://' + page
+
+        try:
             driver.get(base_url)
             logger.info("open web browser : " + base_url)
             driver.get(url)
@@ -216,28 +225,28 @@ def main():
             logger.debug(url)
             driver.quit()
 
+            time.sleep(5)
+
+        except TimeoutException as e:
+            print(e)
+            driver.execute_script("window.location.href=" + url + ";")
+
+        except Exception as e:
+            exc_type, exc_obj, tb = sys.exc_info()
+            f = tb.tb_frame
+            lineno = tb.tb_lineno
+            filename = f.f_code.co_filename
+            linecache.checkcache(filename)
+            line = linecache.getline(filename, lineno, f.f_globals)
+            print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
+            print(e)
+
+        finally:
             logger.info("close web browser")
             killed_pid = kill_process(logger, mitm_proc)
 
-            logger.info("mitmdump process stop : pid " + str(killed_pid) )
+            logger.info("mitmdump process stop : pid " + str(killed_pid))
             close_mitmproxy_socket()
-            time.sleep(5)
-
-    except TimeoutException as e:
-        print(e)
-
-    except Exception as e:
-        exc_type, exc_obj, tb = sys.exc_info()
-        f = tb.tb_frame
-        lineno = tb.tb_lineno
-        filename = f.f_code.co_filename
-        linecache.checkcache(filename)
-        line = linecache.getline(filename, lineno, f.f_globals)
-        print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
-        print(e)
-        sys.exit(1)
-
-
 
 
 if __name__ == "__main__":
