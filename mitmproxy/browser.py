@@ -225,11 +225,9 @@ def main():
             logger.debug(url)
             driver.quit()
 
-            time.sleep(5)
-
         except TimeoutException as e:
             print(e)
-            driver.execute_script("window.location.href=" + url + ";")
+            driver.refresh()
 
         except Exception as e:
             exc_type, exc_obj, tb = sys.exc_info()
@@ -241,11 +239,12 @@ def main():
             print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj) )
             print(e)
 
+
         finally:
             logger.info("close web browser")
             killed_pid = kill_process(logger, mitm_proc)
-
             logger.info("mitmdump process stop : pid " + str(killed_pid))
+            time.sleep(5)
             close_mitmproxy_socket()
 
 
