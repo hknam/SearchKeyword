@@ -200,7 +200,8 @@ def main():
 
 
     for page in pages.split('\n'):
-        dumpfile_name = page.split(',')[0].strip()
+        url = page.split(',')[1]
+        dumpfile_name = url.split("://")[1]
         logger = init_logger(dumpfile_name)
 
         mitm_proc = start_process(dumpfile_name)
@@ -210,7 +211,7 @@ def main():
         driver = init_webdriver()
         logger.info("open selenium webdriver")
 
-        url = page.split(',')[1]
+
         # url = 'http://' + page
 
         try:
