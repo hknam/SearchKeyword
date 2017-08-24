@@ -192,15 +192,37 @@ def close_mitmproxy_socket():
 
 
 def main():
-
+    logger = init_logger('url, page number')
 
     urls = 'gov_list.txt'
-
     with open(urls, 'r') as file:
         pages = file.read()
 
-    for page in pages.split('\n'):
-        url = page.split(',')[1]
+    page_list = pages.split('\n')
+
+    logger.info("total pages : " + str(len(page_list)))
+
+    try:
+        page_number = int(sys.argv[1])
+        if page_number > len(page_list):
+            logger.error("page number out of range error")
+            sys.exit(1)
+
+    except IndexError as e:
+        page_number = 0
+        logger.info("no input number")
+
+    logger.info("start page number : " + str(page_number))
+
+
+
+
+    #for page in pages.split('\n'):
+    #    url = page.split(',')[1]
+    for index in range(page_number, len(page_list)):
+
+        url = page_list[index].split(',')[1]
+
         dumpfile_name = url.split("://")[1].split("/")[0]
         logger = init_logger(dumpfile_name)
 
@@ -252,6 +274,7 @@ def main():
             time.sleep(1)
             display.stop()
             logger.info("virtual display stop")
+            time.sleep(5)
 
 
 
