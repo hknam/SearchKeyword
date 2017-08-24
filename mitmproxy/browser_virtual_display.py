@@ -244,8 +244,9 @@ def main():
             logger.info("close web browser")
             killed_pid = kill_process(logger, mitm_proc)
             logger.info("mitmdump process stop : pid " + str(killed_pid))
-            time.sleep(5)
             close_mitmproxy_socket()
+            logger.info("close mitmproxy port")
+            time.sleep(5)
 
         display.stop()
 
