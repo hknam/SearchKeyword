@@ -96,3 +96,6 @@ ENV/
 
 #txt
 mitmproxy/*.txt
+
+#config
+.config
