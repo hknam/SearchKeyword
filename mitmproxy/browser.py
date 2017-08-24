@@ -201,7 +201,7 @@ def main():
 
     for page in pages.split('\n'):
         url = page.split(',')[1]
-        dumpfile_name = url.split("://")[1]
+        dumpfile_name = url.split("://")[1].split("/")[0]
         logger = init_logger(dumpfile_name)
 
         mitm_proc = start_process(dumpfile_name)
