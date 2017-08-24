@@ -192,8 +192,7 @@ def close_mitmproxy_socket():
 
 
 def main():
-    display = Display(visible = 0, size = (800, 600))
-    display.start()
+
 
     urls = 'gov_list.txt'
 
@@ -204,6 +203,10 @@ def main():
         url = page.split(',')[1]
         dumpfile_name = url.split("://")[1].split("/")[0]
         logger = init_logger(dumpfile_name)
+
+        display = Display(visible=0, size=(800, 600))
+        display.start()
+        logger.info("virtual display start")
 
         mitm_proc = start_process(dumpfile_name)
         logger.info("mitmdump process start : pid " + str(mitm_proc.pid))
@@ -246,9 +249,9 @@ def main():
             logger.info("mitmdump process stop : pid " + str(killed_pid))
             close_mitmproxy_socket()
             logger.info("close mitmproxy port")
-            time.sleep(5)
-
-        display.stop()
+            time.sleep(1)
+            display.stop()
+            logger.info("virtual display stop")
 
 
 
