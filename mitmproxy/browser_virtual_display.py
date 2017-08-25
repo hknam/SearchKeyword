@@ -251,8 +251,7 @@ def main():
             driver.quit()
 
         except TimeoutException as e:
-            print(e)
-            driver.refresh()
+            logger.error("timeout exception : " + driver.current_url)
 
         except Exception as e:
             exc_type, exc_obj, tb = sys.exc_info()
@@ -261,8 +260,9 @@ def main():
             filename = f.f_code.co_filename
             linecache.checkcache(filename)
             line = linecache.getline(filename, lineno, f.f_globals)
-            print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+            logger.error('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
             print(e)
+            logger.error("error page number : " + str(index))
 
 
         finally:
