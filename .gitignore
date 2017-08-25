@@ -98,4 +98,4 @@ ENV/
 mitmproxy/*.txt
 
 #config
-.config
+.ini
