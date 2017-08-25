@@ -51,6 +51,7 @@ def init_webdriver():
         apply proxy preference to selenium webdriver
         get proxy, webdriver settring form config.ini
     """
+    logger = init_logger('init_webdriver')
 
     try:
         profile = webdriver.FirefoxProfile()
@@ -66,7 +67,7 @@ def init_webdriver():
 
         return driver
     except Exception as e:
-        print(e)
+        logger.error(e)
         sys.exit(1)
 
 
@@ -79,6 +80,9 @@ def find_external_url(driver):
 
 
 def find_input_tag(driver):
+    logfile_name = driver.current_url.split("://")[1].split("/")[0]
+    logger = init_logger('find_input_tag : ' + logfile_name)
+
     try:
         tags = driver.find_elements_by_tag_name('input')
         for tag in tags:
@@ -126,10 +130,10 @@ def find_input_tag(driver):
                         find_external_url(driver)
                 break
             else:
-                print("Doesn't find any input tags")
+                logger.error("Doesn't find any input tags")
 
     except TimeoutException as e:
-        print(e)
+        logger.error(e)
         driver.close()
 
 
@@ -140,8 +144,8 @@ def find_input_tag(driver):
         filename = f.f_code.co_filename
         linecache.checkcache(filename)
         line = linecache.getline(filename, lineno, f.f_globals)
-        print('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-        print(e)
+        logger.error('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
+
 
 
 def find_id_tag(tag):
@@ -203,23 +207,30 @@ def main():
     logger.info("total pages : " + str(len(page_list)))
 
     try:
-        page_number = int(sys.argv[1])
-        if page_number > len(page_list):
+        start_page_number = int(sys.argv[1])
+        end_page_number = int(sys.argv[2])
+
+        if end_page_number > len(page_list):
+            end_page_number = len(page_list)
+            logger.info("end page number : " + str(end_page_number))
+
+        if start_page_number > end_page_number:
             logger.error("page number out of range error")
             sys.exit(1)
 
     except IndexError as e:
-        page_number = 0
-        logger.info("no input number")
+        start_page_number = 0
+        end_page_number = len(page_list)
+        logger.info("no input number, start page number : 0, end page number : " + str(end_page_number))
 
-    logger.info("start page number : " + str(page_number))
+    logger.info("start page number : " + str(start_page_number) + " end page number : " + str(end_page_number))
 
 
 
 
     #for page in pages.split('\n'):
     #    url = page.split(',')[1]
-    for index in range(page_number, len(page_list)):
+    for index in range(start_page_number, end_page_number):
 
         url = page_list[index].split(',')[1]
 
@@ -261,7 +272,6 @@ def main():
             linecache.checkcache(filename)
             line = linecache.getline(filename, lineno, f.f_globals)
             logger.error('EXCEPTION IN ({}, LINE {} "{}"): {}'.format(filename, lineno, line.strip(), exc_obj))
-            print(e)
             logger.error("error page number : " + str(index))
 
 
