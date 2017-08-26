@@ -198,6 +198,7 @@ def close_mitmproxy_socket():
 def main():
     logger = init_logger('url, page number')
 
+
     urls = 'gov_list.txt'
     with open(urls, 'r') as file:
         pages = file.read()
@@ -231,8 +232,11 @@ def main():
     #for page in pages.split('\n'):
     #    url = page.split(',')[1]
     for index in range(start_page_number, end_page_number):
-
-        url = page_list[index].split(',')[1]
+        try:
+            url = page_list[index].split(',')[1]
+        except IndexError as e:
+            logger.error(e)
+            continue
 
         dumpfile_name = url.split("://")[1].split("/")[0]
         logger = init_logger(dumpfile_name)
