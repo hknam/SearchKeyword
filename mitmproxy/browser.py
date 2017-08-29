@@ -233,11 +233,12 @@ def main():
 
         try:
             url = page_list[index].split(',')[1]
+            dumpfile_name = url.split("://")[1].split("/")[0]
         except IndexError as e:
             logger.error(e)
             continue
 
-        dumpfile_name = url.split("://")[1].split("/")[0]
+
         logger = init_logger(dumpfile_name)
 
         mitm_proc = start_process(dumpfile_name)
