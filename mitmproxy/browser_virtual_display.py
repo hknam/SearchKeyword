@@ -15,6 +15,7 @@ from pyvirtualdisplay import Display
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+keyword = config['keyword']
 proxy = config['proxy']['address']
 port = config['proxy']['port']
 driver_path = config['webdriver']['path']
@@ -26,7 +27,7 @@ def init_logger(file_name):
 
     fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
 
-    folder_path = os.path.expanduser('~') + "/" + "flowdump/logs/"
+    folder_path = os.path.expanduser('~') + "/flowdump/logs/"
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -98,7 +99,7 @@ def find_input_tag(driver):
 
             if tag_id:
                 elem = driver.find_element_by_id(tag_id)
-                elem.send_keys('iphone')
+                elem.send_keys()
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
 
@@ -109,7 +110,7 @@ def find_input_tag(driver):
 
             elif tag_name:
                 elem = driver.find_element_by_name(tag_name)
-                elem.send_keys('iphone')
+                elem.send_keys(keyword)
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
 
@@ -120,7 +121,7 @@ def find_input_tag(driver):
 
             elif tag_class:
                 elem = driver.find_element_by_class_name(tag_class)
-                elem.send_keys('iphone')
+                elem.send_keys(keyword)
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
 
@@ -169,21 +170,32 @@ def find_name_tag(tag):
         return False
 
 
-def start_process(dumpfile_name):
-    folder_path = os.path.expanduser('~') + "/" + "flowdump/traffic/"
+def start_process(logger, dumpfile_name):
+    folder_path = os.path.expanduser('~') + "/flowdump/traffic/"
+    full_file_path = folder_path + dumpfile_name
 
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 
-    command = "mitmdump -w " + folder_path + dumpfile_name
+    if os.path.exists(full_file_path):
+        os.remove(full_file_path)
+
+    command = "mitmdump -w " + full_file_path
 
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+
+    outs, errs = run_command.communicate(timeout = 30)
+
+    logger.info("subprocess open outs : " + str(outs))
+    logger.info("subprocess open errors : " + str(errs))
 
     return run_command
 
 
+
 def kill_process(logger, process):
     process.kill()
+
     return process.pid
 
 

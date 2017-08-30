@@ -26,6 +26,8 @@ config['webdriver'] = {}
 config['webdriver']['path'] = './geckodriver'
 config['webdriver']['base_url'] = 'about:blank'
 
+config['keyword'] = 'iphone'
+
 with open('config.ini', 'w') as configfile:
     config.write(configfile)
 
