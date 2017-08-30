@@ -173,7 +173,7 @@ def find_name_tag(tag):
         return False
 
 
-def start_process(dumpfile_name):
+def start_process(logger, dumpfile_name):
     folder_path = os.path.expanduser('~') + "/flowdump/traffic/"
     full_file_path = folder_path + dumpfile_name
 
@@ -186,6 +186,11 @@ def start_process(dumpfile_name):
     command = "mitmdump -w " + full_file_path
 
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+
+    outs, errs = run_command.communicate(timeout=30)
+
+    logger.info("subprocess open outs : " + str(outs))
+    logger.info("subprocess open errors : " + str(errs))
 
     return run_command
 
@@ -245,7 +250,7 @@ def main():
 
         logger = init_logger(dumpfile_name)
 
-        mitm_proc = start_process(dumpfile_name)
+        mitm_proc = start_process(logger, dumpfile_name)
         logger.info("mitmdump process start : pid " + str(mitm_proc.pid))
 
 
