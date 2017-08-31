@@ -14,7 +14,7 @@ import datetime
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-keyword = config['keyword']
+keyword = config['filename']['keyword']
 proxy = config['proxy']['address']
 port =  config['proxy']['port']
 driver_path = config['webdriver']['path']
