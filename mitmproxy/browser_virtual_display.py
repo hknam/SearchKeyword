@@ -244,11 +244,12 @@ def main():
     #for page in pages.split('\n'):
     #    url = page.split(',')[1]
     for index in range(start_page_number, end_page_number):
-        url = page_list[index].split(',')[1]
         try:
+            url = page_list[index].split(',')[1]
             dumpfile_name = url.split("://")[1].split("/")[0]
         except IndexError as e:
-            dumpfile_name = url.split('.')[1]
+            logger.error(e)
+            continue
 
 
         logger = init_logger(dumpfile_name)
@@ -257,7 +258,7 @@ def main():
         display.start()
         logger.info("virtual display start")
 
-        mitm_proc = start_process(dumpfile_name)
+        mitm_proc = start_process(logger, dumpfile_name)
         logger.info("mitmdump process start : pid " + str(mitm_proc.pid))
 
         driver = init_webdriver()
