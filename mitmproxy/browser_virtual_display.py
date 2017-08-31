@@ -64,7 +64,7 @@ def init_webdriver():
         profile.set_preference('dom.popup_maximum', 0)
 
         driver = webdriver.Firefox(executable_path=driver_path, firefox_profile=profile)
-        driver.set_page_load_timeout(120)
+        driver.set_page_load_timeout(180)
 
         return driver
     except Exception as e:
@@ -185,10 +185,6 @@ def start_process(logger, dumpfile_name):
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
     logger.info('run mitmproxy subprocess Popen')
 
-    outs, errs = run_command.communicate(timeout = 30)
-
-    logger.info("subprocess open outs : " + str(outs))
-    logger.info("subprocess open errors : " + str(errs))
 
     return run_command
 
