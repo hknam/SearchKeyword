@@ -244,12 +244,11 @@ def main():
     #for page in pages.split('\n'):
     #    url = page.split(',')[1]
     for index in range(start_page_number, end_page_number):
+        url = page_list[index].split(',')[1]
         try:
-            url = page_list[index].split(',')[1]
             dumpfile_name = url.split("://")[1].split("/")[0]
         except IndexError as e:
-            logger.error(e)
-            continue
+            dumpfile_name = url.split('.')[1]
 
 
         logger = init_logger(dumpfile_name)
