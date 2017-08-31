@@ -183,6 +183,7 @@ def start_process(logger, dumpfile_name):
     command = "mitmdump -w " + full_file_path
 
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    logger.info('run mitmproxy subprocess Popen')
 
     outs, errs = run_command.communicate(timeout = 30)
 
