@@ -1,7 +1,9 @@
 from mitmproxy import io
 from mitmproxy.exceptions import FlowReadException
+import os
 
-def read_flowfile(flowfile):
+
+def read_flowfile(flowfile, filename):
     with open(flowfile, 'rb') as capture_traffic:
         freader = io.FlowReader(capture_traffic)
         try:
@@ -11,7 +13,10 @@ def read_flowfile(flowfile):
         except FlowReadException as e:
             print("flow file corrupted: {}".format(e))
 
+        
+
 def find_search_keyword(flow):
+
     lines = flow.split('\n')
     for line in lines:
         if line.find('iphone') >= 0:
@@ -19,12 +24,19 @@ def find_search_keyword(flow):
 
 
 
+def search(dirname):
+    filenames = os.listdir(dirname)
+    for filename in filenames:
+        full_filename = os.path.join(dirname, filename)
+        read_flowfile(full_filename, filename)
+
 
 
 
 def main():
-    file_path = '/home/hknam/Documents/flowdump/flowdump/traffic/www.gjicp.or.kr'
-    read_flowfile(file_path)
+    file_path = '/home/hknam/Downloads/170912/result/traffic/'
+    #result_file_path = '/home/hknam/flowdump/traffic/'
+    search(file_path)
 
 
 if __name__ == "__main__":

@@ -24,8 +24,8 @@ base_url = config['webdriver']['base_url']
 def init_logger(file_name):
 
     logger = logging.getLogger(file_name)
-
     logger.propagate = False
+
 
     fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
 
@@ -188,11 +188,7 @@ def start_process(logger, dumpfile_name):
     command = "mitmdump -w " + full_file_path
 
     run_command = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-
-    outs, errs = run_command.communicate(timeout=30)
-
-    logger.info("subprocess open outs : " + str(outs))
-    logger.info("subprocess open errors : " + str(errs))
+    logger.info('run mitmproxy subprocess Popen')
 
     return run_command
 
