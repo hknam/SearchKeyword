@@ -25,6 +25,8 @@ base_url = config['webdriver']['base_url']
 def init_logger(file_name):
     logger = logging.getLogger(file_name)
 
+    logger.propagate = False
+
     fomatter = logging.Formatter('[%(levelname)s|%(filename)s:%(lineno)s] %(asctime)s > %(message)s')
 
     folder_path = os.path.expanduser('~') + "/flowdump/logs/"
