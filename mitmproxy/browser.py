@@ -64,8 +64,9 @@ def init_webdriver():
         profile.set_preference('network.proxy.type', 1)
         profile.set_preference('dom.popup_maximum', 0)
 
-
-        driver = webdriver.Firefox(executable_path = driver_path, firefox_profile = profile)
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-private')
+        driver = webdriver.Firefox(executable_path = driver_path, firefox_profile = profile, firefox_options=options)
         driver.set_page_load_timeout(120)
 
 
