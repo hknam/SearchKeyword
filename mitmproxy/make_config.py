@@ -1,7 +1,17 @@
-
+import platform
 import configparser
 config = configparser.ConfigParser()
 
+
+def detect_os():
+    platform_name = platform.system()
+    if platform_name == 'Linux':
+        return 'geckodriver_linux'
+    elif platform_name == 'Darwin':
+        return 'geckodriver_macos'
+    else:
+        print('Do not support this platform')
+        sys.exit(1)
 
 config['filename'] = {}
 
@@ -23,7 +33,7 @@ config['proxy']['name'] = 'mitmproxy'
 config['webdriver'] = {}
 
 
-config['webdriver']['path'] = './geckodriver'
+config['webdriver']['path'] = './webdriver/' + detect_os()
 config['webdriver']['base_url'] = 'about:blank'
 
 
