@@ -13,14 +13,15 @@ def read_flowfile(flowfile, filename):
         except FlowReadException as e:
             print("flow file corrupted: {}".format(e))
 
-        
+
 
 def find_search_keyword(flow):
 
     lines = flow.split('\n')
     for line in lines:
-        if line.find('iphone') >= 0:
-            print(line)
+        print(line)
+        #if line.find('iphone') >= 0:
+        #    print(line)
 
 
 
@@ -35,7 +36,7 @@ def search(dirname):
 
 def main():
     file_path = '/home/hknam/Downloads/170912/result/traffic/'
-    #result_file_path = '/home/hknam/flowdump/traffic/'
+    #file_path = '/home/hknam/flowdump/traffic/'
     search(file_path)
 
 

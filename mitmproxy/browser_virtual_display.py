@@ -3,6 +3,9 @@ import linecache
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import time
 import configparser
@@ -99,9 +102,19 @@ def find_input_tag(driver):
             tag_name = find_name_tag(tag)
             tag_class = find_class_tag(tag)
 
+
             if tag_id:
                 elem = driver.find_element_by_id(tag_id)
-                elem.send_keys()
+                '''
+                elem = WebDriverWait(driver, 30).until(
+                    EC.element_to_be_clickable((By.ID, tag_id))
+                )
+                '''
+                logger.info("find input tag : " + str(tag_id))
+                #section = 'section[role="main"] input[id="'+ str(tag_id)+'"]'
+                #print(section)
+                #elem = driver.find_element_by_css_selector(section)
+                elem.send_keys(keyword)
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
 
@@ -112,6 +125,7 @@ def find_input_tag(driver):
 
             elif tag_name:
                 elem = driver.find_element_by_name(tag_name)
+                logger.info("find input tag : " + str(tag_name))
                 elem.send_keys(keyword)
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
@@ -123,6 +137,7 @@ def find_input_tag(driver):
 
             elif tag_class:
                 elem = driver.find_element_by_class_name(tag_class)
+                logger.info("find input tag : " + str(tag_class))
                 elem.send_keys(keyword)
                 elem.send_keys(Keys.RETURN)
                 time.sleep(10)
@@ -242,6 +257,7 @@ def main():
 
     #for page in pages.split('\n'):
     #    url = page.split(',')[1]
+
     for index in range(start_page_number, end_page_number):
         try:
             url = page_list[index].split(',')[1]
@@ -264,17 +280,15 @@ def main():
         logger.info("open selenium webdriver")
 
         # url = 'http://' + page
-
+        url = 'http://yt.suwon.go.kr/'
         try:
             driver.get(base_url)
             logger.info("open web browser : " + base_url)
             driver.get(url)
 
-            logger.info("current browser url : " + driver.current_url)
-            logger.info("find input tag")
+            logger.info("current browser url : " + driver.title)
             find_input_tag(driver)
             driver.implicitly_wait(30)
-            logger.debug(url)
             driver.quit()
 
         except TimeoutException as e:
@@ -301,6 +315,7 @@ def main():
             display.stop()
             logger.info("virtual display stop")
             time.sleep(5)
+            break
 
 
 

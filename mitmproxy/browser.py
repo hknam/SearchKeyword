@@ -138,6 +138,13 @@ def find_input_tag(driver):
                 break
             else:
                 logger.error("Doesn't find any input tags")
+
+            alert = driver.switch_to_alert()
+            if alert:
+                alert.dismiss()
+            else:
+                continue
+
                 
     except TimeoutException as e:
         logger.error(e)
@@ -263,6 +270,7 @@ def main():
             driver.get(base_url)
             logger.info("open web browser : " + base_url)
             driver.get(url)
+
 
             logger.info("current browser url : " + driver.current_url)
             logger.info("find input tag")
