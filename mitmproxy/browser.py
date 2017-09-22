@@ -3,6 +3,8 @@ import linecache
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import time
 import configparser
@@ -139,11 +141,15 @@ def find_input_tag(driver):
             else:
                 logger.error("Doesn't find any input tags")
 
-            alert = driver.switch_to_alert()
-            if alert:
-                alert.dismiss()
-            else:
-                continue
+
+            try:
+                WebDriverWait(driver, 5).until(EC.alert_is_present(), 'Time out waiting for alert')
+
+                alert = driver.switch_to_alert()
+                alert.accept()
+
+            except TimeoutException:
+                logger.info('No alert')
 
                 
     except TimeoutException as e:
