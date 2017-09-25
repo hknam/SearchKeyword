@@ -19,9 +19,9 @@ def find_search_keyword(flow):
 
     lines = flow.split('\n')
     for line in lines:
-        print(line)
-        #if line.find('iphone') >= 0:
-        #    print(line)
+        #print(line)
+        if line.find('iphone') >= 0:
+            print(line)
 
 
 
@@ -35,8 +35,8 @@ def search(dirname):
 
 
 def main():
-    file_path = '/home/hknam/Downloads/170912/result/traffic/'
-    #file_path = '/home/hknam/flowdump/traffic/'
+    #file_path = '/home/hknam/Downloads/170912/result/traffic/'
+    file_path = '/home/hknam/flowdump/traffic/'
     search(file_path)
 
 
