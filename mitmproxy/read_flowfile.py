@@ -6,9 +6,11 @@ import os
 def read_flowfile(flowfile, filename):
     with open(flowfile, 'rb') as capture_traffic:
         freader = io.FlowReader(capture_traffic)
+
         try:
             for flow in freader.stream():
-                find_search_keyword(str(flow))
+                if find_search_keyword(str(flow)):
+                    print(flowfile)
 
         except FlowReadException as e:
             print("flow file corrupted: {}".format(e))
@@ -21,7 +23,8 @@ def find_search_keyword(flow):
     for line in lines:
         #print(line)
         if line.find('iphone') >= 0:
-            print(line)
+            return True
+    return False
 
 
 
