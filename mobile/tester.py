@@ -68,6 +68,8 @@ def search_test():
 
         search_box.send_keys(Keys.RETURN)
 
+        #driver.execute_script('return window.document.referrer')
+
         driver.quit()
 
         time.sleep(5)
