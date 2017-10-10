@@ -33,7 +33,7 @@ config['proxy']['name'] = 'mitmproxy'
 config['webdriver'] = {}
 
 
-config['webdriver']['path'] = './webdriver/' + detect_os()
+config['webdriver']['path'] = '../webdriver/' + detect_os()
 config['webdriver']['base_url'] = 'about:blank'
 
 
