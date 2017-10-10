@@ -2,7 +2,20 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import subprocess
+import sys
+import platform
+import signal
+import os
 
+def detect_os():
+    platform_name = platform.system()
+    if platform_name == 'Linux':
+        return '../webdriver/chromedriver_linux'
+    elif platform_name == 'Darwin':
+        return '../webdriver/chromedriver_macos'
+    else:
+        print('Do not support this platform')
+        sys.exit(1)
 
 def init_adb_server():
     print('===== START ADB SERVER =====')
@@ -12,10 +25,11 @@ def init_adb_server():
     print(output)
 
 def close_webdriver_port():
-    close_port = subprocess.Popen('fuser -k -n tcp 9515', stdout = subprocess.PIPE, shell = True)
-    output = close_port.stdout.read()
-
-    print(output)
+    get_port_number = subprocess.Popen(['lsof -i :9515'], stdout = subprocess.PIPE, shell = True)
+    output = str(get_port_number.stdout.read())
+    pid_line = output.split('\\n')[1]
+    pid = int(pid_line.split(' ')[1])
+    os.kill(pid, signal.SIGTERM)
 
 
 def kill_adb_server():
@@ -27,19 +41,19 @@ def kill_adb_server():
 
 def run_chromedriver():
 
-    command = subprocess.Popen('../mitmproxy/webdriver/chromedriver', stdout = subprocess.PIPE, shell = True)
+    command = subprocess.Popen('../webdriver/chromedriver_macos', stdout = subprocess.PIPE, shell = True)
     return command
 
 
 
 def init_webdriver():
 
-
+    driver_path = detect_os()
     options = webdriver.ChromeOptions()
     options.add_experimental_option('androidPackage', 'com.android.chrome')
     options.add_argument("--incognito")
 
-    driver = webdriver.Chrome(chrome_options=options)
+    driver = webdriver.Chrome(driver_path, chrome_options=options)
 
     return driver
 
@@ -68,7 +82,7 @@ def search_test():
 
         search_box.send_keys(Keys.RETURN)
 
-        #driver.execute_script('return window.document.referrer')
+        driver.execute_script('return window.document.referrer')
 
         driver.quit()
 
