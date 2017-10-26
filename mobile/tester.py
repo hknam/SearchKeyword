@@ -6,6 +6,7 @@ import sys
 import platform
 import signal
 import os
+import argparse
 
 def detect_os():
     platform_name = platform.system()
@@ -16,6 +17,15 @@ def detect_os():
     else:
         print('Do not support this platform')
         sys.exit(1)
+
+
+def add_argument():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--path', help='test page path')
+    parser.add_argument('--start', help='start page index')
+    parser.add_argument('--end', help='end page index')
+
+    return parser
 
 def init_adb_server():
     print('===== START ADB SERVER =====')
@@ -61,6 +71,9 @@ def init_webdriver():
 
 def search_test():
 
+    parser = add_argument()
+
+
     init_adb_server()
 
     chromedriver = run_chromedriver()
@@ -97,6 +110,7 @@ def search_test():
     kill_adb_server()
 
     close_webdriver_port()
+    
 
 search_test()
 
