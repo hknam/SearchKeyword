@@ -41,7 +41,8 @@ def kill_adb_server():
 
 def run_chromedriver():
 
-    command = subprocess.Popen('../webdriver/chromedriver_macos', stdout = subprocess.PIPE, shell = True)
+    driver_path = detect_os()
+    command = subprocess.Popen(driver_path, stdout = subprocess.PIPE, shell = True)
     return command
 
 
@@ -82,7 +83,9 @@ def search_test():
 
         search_box.send_keys(Keys.RETURN)
 
-        driver.execute_script('return window.document.referrer')
+        time.sleep(5)
+
+        print( driver.execute_script('return window.document.referrer') )
 
         driver.quit()
 
